@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sara — Applied Mathematics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --deep:    #1A0A2E;
+      --dark:    #22103D;
+      --bg:      #F3F0F8;
+      --purple:  #7C4DBC;
+      --violet:  #A67DE8;
+      --lilac:   #D4B8F5;
+      --muted:   #9B85B8;
+      --white:   #FFFFFF;
+      --text:    #1E1030;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    /* ── Layout ── */
+    .site-wrapper {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      background: var(--deep);
+      display: flex;
+      flex-direction: column;
+      padding: 2.5rem 1.8rem;
+    }
+
+    .sidebar-name {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.25rem;
+      color: var(--white);
+      line-height: 1.3;
+      margin-bottom: 0.3rem;
+    }
+    .sidebar-role {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+
+    nav { display: flex; flex-direction: column; gap: 0.15rem; }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.45rem 0.6rem;
+      border-radius: 4px;
+      transition: color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    nav a::before {
+      content: '';
+      width: 16px;
+      height: 1px;
+      background: currentColor;
+      flex-shrink: 0;
+      transition: width 0.2s;
+    }
+    nav a:hover, nav a.active {
+      color: var(--lilac);
+      background: rgba(212,184,245,0.08);
+    }
+    nav a:hover::before, nav a.active::before { width: 24px; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .sidebar-footer a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .sidebar-footer a:hover { color: var(--lilac); }
+
+    /* ── Main ── */
+    main { overflow-x: hidden; }
+
+    section {
+      min-height: 100vh;
+      padding: 5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-bottom: 1px solid rgba(124,77,188,0.1);
+    }
+    section:last-child { border-bottom: none; min-height: auto; padding-bottom: 6rem; }
+
+    /* ── Hero ── */
+    #hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--deep);
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    #streamlines {
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--violet);
+      margin-bottom: 1.2rem;
+    }
+
+    h1 {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(2.6rem, 4.5vw, 4rem);
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+      max-width: 580px;
+    }
+    h1 em { font-style: italic; color: var(--lilac); }
+
+    .hero-sub {
+      color: rgba(243,240,248,0.6);
+      max-width: 500px;
+      font-size: 1rem;
+      line-height: 1.75;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-block;
+      padding: 0.6rem 1.4rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 3px;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-primary { background: var(--violet); color: var(--deep); font-weight: 500; }
+    .btn-primary:hover { background: var(--lilac); }
+    .btn-ghost { border: 1px solid rgba(212,184,245,0.3); color: rgba(212,184,245,0.75); }
+    .btn-ghost:hover { border-color: var(--lilac); color: var(--lilac); }
+
+    /* ── Chlamydomonas illustration ── */
+    .chlamydo-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #chlamydo { width: 280px; height: 320px; overflow: visible; }
+
+    /* ── Section headings ── */
+    h2 {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--deep);
+      margin-bottom: 0.4rem;
+    }
+    .section-rule {
+      width: 40px;
+      height: 2px;
+      background: var(--purple);
+      margin-bottom: 2.2rem;
+    }
+
+    /* ── About ── */
+    #about .about-grid {
+      display: grid;
+      grid-template-columns: 200px 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    /* Photo slot */
+    .photo-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .photo-frame {
+      width: 160px;
+      height: 200px;
+      border-radius: 6px;
+      background: linear-gradient(145deg, rgba(124,77,188,0.12), rgba(166,125,232,0.08));
+      border: 1.5px dashed rgba(124,77,188,0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .photo-frame:hover { border-color: var(--purple); background: rgba(124,77,188,0.08); }
+    .photo-frame img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 5px;
+      display: none;
+    }
+    .photo-frame.has-photo img { display: block; }
+    .photo-frame.has-photo .photo-placeholder { display: none; }
+    .photo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+    .photo-placeholder svg { opacity: 0.35; }
+    .photo-placeholder span {
+      font-size: 0.68rem;
+      color: var(--purple);
+      letter-spacing: 0.05em;
+      text-align: center;
+      opacity: 0.7;
+    }
+    .photo-hint {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+    #photo-input { display: none; }
+
+    .about-text p { margin-bottom: 1rem; font-size: 0.97rem; }
+    .about-text p:last-child { margin-bottom: 0; }
+
+    .about-details { display: flex; flex-direction: column; gap: 1.6rem; }
+    .detail-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 0.4rem;
+    }
+    .detail-value { font-size: 0.92rem; color: var(--text); }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
+    .tag {
+      font-size: 0.72rem;
+      padding: 0.25rem 0.65rem;
+      background: rgba(124,77,188,0.08);
+      color: var(--purple);
+      border-radius: 2px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Research ── */
+    #research { background: var(--white); }
+    .research-list { display: flex; flex-direction: column; gap: 2.2rem; }
+    .research-item {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 1.4rem;
+      align-items: start;
+    }
+    .research-num {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--violet);
+      line-height: 1;
+      padding-top: 0.1rem;
+    }
+    .research-title {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--deep);
+      margin-bottom: 0.35rem;
+      line-height: 1.4;
+    }
+    .research-desc { font-size: 0.9rem; color: #5a4870; line-height: 1.7; }
+
+    /* ── Publications ── */
+    .pub-list { display: flex; flex-direction: column; gap: 1.8rem; }
+    .pub-item {
+      padding: 1.4rem 1.6rem;
+      border: 1px solid rgba(124,77,188,0.18);
+      border-radius: 4px;
+      background: var(--white);
+      transition: border-color 0.2s;
+    }
+    .pub-item:hover { border-color: var(--purple); }
+    .pub-meta { display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; }
+    .pub-journal { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); }
+    .pub-year { font-size: 0.7rem; color: var(--muted); }
+    .pub-status {
+      font-size: 0.66rem; padding: 0.15rem 0.5rem;
+      background: rgba(166,125,232,0.15); color: #5a2d9e;
+      border-radius: 2px; letter-spacing: 0.05em;
+    }
+    .pub-title {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.08rem; color: var(--deep);
+      line-height: 1.45; margin-bottom: 0.35rem;
+    }
+    .pub-authors { font-size: 0.83rem; color: var(--muted); font-style: italic; }
+
+    /* ── Contact ── */
+    #contact { background: var(--dark); }
+    #contact h2 { color: var(--white); }
+    #contact .section-rule { background: var(--violet); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .contact-text { color: rgba(243,240,248,0.6); font-size: 0.97rem; line-height: 1.8; }
+    .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-link {
+      display: flex; align-items: center; gap: 0.8rem;
+      color: rgba(243,240,248,0.7); text-decoration: none;
+      font-size: 0.88rem; padding: 0.8rem 1rem;
+      border: 1px solid rgba(212,184,245,0.12); border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .contact-link:hover { border-color: var(--violet); color: var(--lilac); }
+    .contact-icon { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.6; }
+    .contact-link:hover .contact-icon { opacity: 1; }
+
+    /* ── Mobile ── */
+    .mob-header {
+      display: none; background: var(--deep); padding: 1rem 1.5rem;
+      position: sticky; top: 0; z-index: 100;
+      align-items: center; justify-content: space-between;
+    }
+    .mob-name { font-family: 'EB Garamond', serif; color: var(--white); font-size: 1.1rem; }
+    .mob-nav-toggle { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.4rem; line-height: 1; }
+    .mob-nav { display: none; background: var(--deep); padding: 0 1.5rem 1.5rem; flex-direction: column; gap: 0.3rem; }
+    .mob-nav.open { display: flex; }
+    .mob-nav a { color: var(--muted); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .mob-nav a:hover { color: var(--lilac); }
+
+    @media (max-width: 1050px) {
+      #hero { grid-template-columns: 1fr; }
+      .chlamydo-wrap { display: none; }
+    }
+    @media (max-width: 900px) {
+      .site-wrapper { grid-template-columns: 1fr; }
+      aside { display: none; }
+      .mob-header { display: flex; }
+      section { padding: 3rem 1.8rem; min-height: auto; }
+      #about .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .photo-slot { flex-direction: row; align-items: flex-start; }
+      .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="mob-header">
+  <span class="mob-name">Sara</span>
+  <button class="mob-nav-toggle" onclick="document.querySelector('.mob-nav').classList.toggle('open')">☰</button>
+</header>
+<nav class="mob-nav">
+  <a href="#hero">Home</a>
+  <a href="#about">About</a>
+  <a href="#research">Research</a>
+  <a href="#publications">Publications</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<div class="site-wrapper">
+  <aside>
+    <div class="sidebar-name">Sara</div>
+    <div class="sidebar-role">PhD · Applied Mathematics</div>
+    <nav>
+      <a href="#hero" class="active">Home</a>
+      <a href="#about">About</a>
+      <a href="#research">Research</a>
+      <a href="#publications">Publications</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="mailto:your.email@ucl.ac.uk">your.email@ucl.ac.uk</a>
+      <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+      <a href="https://scholar.google.com" target="_blank">Google Scholar</a>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- ── Hero ── -->
+    <section id="hero">
+
+      <!-- Background streamlines -->
+      <svg id="streamlines" viewBox="0 0 900 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#7C4DBC" stroke-width="1">
+          <path d="M-50,80 C120,60 240,110 400,90 S660,45 820,75 S920,110 970,95" opacity="0.7" stroke-dasharray="5 3">
+            <animate attributeName="stroke-dashoffset" from="0" to="-400" dur="14s" repeatCount="indefinite"/>
+          </path>
+          <path d="M-50,170 C100,155 230,195 390,178 S640,138 800,165 S910,185 970,175" opacity="0.5" stroke-dasharray="8 4">
+            <animate attributeName="stroke-dashoffset" from="0" to="-400" dur="19s" repeatCount="indefinite"/>
+          </path>
+          <path d="M-50,260 C130,248 260,278 420,262 S670,228 820,254 S920,268 970,262" opacity="0.4">
+            <animate attributeName="stroke-dashoffset" from="0" to="-400" dur="23s" repeatCount="indefinite"/>
+          </path>
+          <path d="M-50,350 C110,340 245,365 405,350 S655,320 810,346 S915,358 970,352" opacity="0.3" stroke-dasharray="3 7">
+            <animate attributeName="stroke-dashoffset" from="0" to="-400" dur="17s" repeatCount="indefinite"/>
+          </path>
+          <path d="M-50,440 C120,432 255,452 415,438 S660,412 815,436 S918,446 970,441" opacity="0.2">
+            <animate attributeName="stroke-dashoffset" from="0" to="-400" dur="26s" repeatCount="indefinite"/>
+          </path>
+        </g>
+      </svg>
+
+      <div class="hero-content">
+        <div class="hero-eyebrow">University College London · Mathematics</div>
+        <h1>Motion at the<br><em>microscale</em></h1>
+        <p class="hero-sub">I study how microorganisms navigate viscosity-dominated flows — using multiscale analysis and singularity methods to understand locomotion near boundaries.</p>
+        <div class="hero-links">
+          <a href="#research" class="btn btn-primary">View research</a>
+          <a href="#publications" class="btn btn-ghost">Publications</a>
+        </div>
+      </div>
+
+      <!-- Chlamydomonas illustration -->
+      <div class="chlamydo-wrap">
+        <svg id="chlamydo" viewBox="-80 -160 160 320" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="bodyGrad" cx="40%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#C4A0F0"/>
+              <stop offset="100%" stop-color="#5B2A9E"/>
+            </radialGradient>
+            <radialGradient id="eyeGrad" cx="30%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#FF9A6C"/>
+              <stop offset="100%" stop-color="#C85000"/>
+            </radialGradient>
+            <radialGradient id="chloroGrad" cx="35%" cy="30%" r="65%">
+              <stop offset="0%" stop-color="#6FD46F"/>
+              <stop offset="100%" stop-color="#1E7A1E"/>
+            </radialGradient>
+          </defs>
+
+          <!-- ── Cell wall (outer rim) ── -->
+          <ellipse cx="0" cy="20" rx="52" ry="64" fill="none" stroke="#A67DE8" stroke-width="2.5" opacity="0.5"/>
+
+          <!-- ── Cell body ── -->
+          <ellipse cx="0" cy="20" rx="46" ry="57" fill="url(#bodyGrad)" opacity="0.92"/>
+
+          <!-- ── Chloroplast (cup-shaped, large) ── -->
+          <ellipse cx="0" cy="28" rx="36" ry="44" fill="url(#chloroGrad)" opacity="0.55"/>
+          <!-- inner chloroplast highlight -->
+          <ellipse cx="-4" cy="22" rx="22" ry="30" fill="none" stroke="#8FE88F" stroke-width="1" opacity="0.4"/>
+
+          <!-- ── Pyrenoid (small bright spot inside chloroplast) ── -->
+          <circle cx="0" cy="42" r="7" fill="#B8F5B8" opacity="0.7"/>
+          <circle cx="0" cy="42" r="4" fill="#DFFFDF" opacity="0.8"/>
+
+          <!-- ── Nucleus (central) ── -->
+          <ellipse cx="2" cy="14" rx="13" ry="11" fill="#9B6DD4" opacity="0.6"/>
+          <ellipse cx="2" cy="14" rx="9" ry="7" fill="#BFA0E8" opacity="0.5"/>
+
+          <!-- ── Eyespot (stigma) — orange-red, upper right ── -->
+          <ellipse cx="22" cy="-8" rx="9" ry="6" fill="url(#eyeGrad)" opacity="0.9"/>
+          <ellipse cx="21" cy="-9" rx="4" ry="2.5" fill="#FFD4A8" opacity="0.6"/>
+
+          <!-- ── Contractile vacuoles (two small, near flagellar base) ── -->
+          <circle cx="-14" cy="-26" r="5" fill="none" stroke="#D4B8F5" stroke-width="1.2" opacity="0.7"/>
+          <circle cx="14" cy="-26" r="5" fill="none" stroke="#D4B8F5" stroke-width="1.2" opacity="0.7"/>
+
+          <!-- ── Cell body highlight ── -->
+          <ellipse cx="-14" cy="-5" rx="16" ry="22" fill="white" opacity="0.12"/>
+
+          <!-- ══════════════════════════════
+               FLAGELLA — two, from apex
+               Each flagellum beats in a
+               breaststroke-like arc.
+               They emerge from the top of
+               the cell and sweep outward.
+          ══════════════════════════════ -->
+
+          <!-- Left flagellum -->
+          <path id="flagL" fill="none" stroke="#D4B8F5" stroke-width="2" stroke-linecap="round"
+            d="M -8,-72
+               C -22,-100 -50,-115 -62,-130
+               S -70,-148 -60,-155">
+            <animate attributeName="d" dur="1.8s" repeatCount="indefinite"
+              values="
+                M -8,-72 C -22,-100 -50,-115 -62,-130 S -70,-148 -60,-155;
+                M -8,-72 C  -5,-100  10,-118  18,-132 S  28,-150  22,-157;
+                M -8,-72 C -22,-100 -50,-115 -62,-130 S -70,-148 -60,-155"
+              calcMode="spline"
+              keySplines="0.45 0 0.55 1; 0.45 0 0.55 1"/>
+          </path>
+          <!-- Left flagellum thinner tip -->
+          <path id="flagLtip" fill="none" stroke="#E8D4FF" stroke-width="1" stroke-linecap="round" opacity="0.6"
+            d="M -62,-130 C -68,-142 -66,-152 -60,-155">
+            <animate attributeName="d" dur="1.8s" repeatCount="indefinite"
+              values="
+                M -62,-130 C -68,-142 -66,-152 -60,-155;
+                M  18,-132 C  24,-144  28,-154  22,-157;
+                M -62,-130 C -68,-142 -66,-152 -60,-155"
+              calcMode="spline"
+              keySplines="0.45 0 0.55 1; 0.45 0 0.55 1"/>
+          </path>
+
+          <!-- Right flagellum -->
+          <path id="flagR" fill="none" stroke="#D4B8F5" stroke-width="2" stroke-linecap="round"
+            d="M 8,-72
+               C 22,-100  50,-115  62,-130
+               S  70,-148  60,-155">
+            <animate attributeName="d" dur="1.8s" repeatCount="indefinite"
+              values="
+                M  8,-72 C  22,-100  50,-115  62,-130 S  70,-148  60,-155;
+                M  8,-72 C   5,-100 -10,-118 -18,-132 S -28,-150 -22,-157;
+                M  8,-72 C  22,-100  50,-115  62,-130 S  70,-148  60,-155"
+              calcMode="spline"
+              keySplines="0.45 0 0.55 1; 0.45 0 0.55 1"/>
+          </path>
+          <!-- Right flagellum thinner tip -->
+          <path id="flagRtip" fill="none" stroke="#E8D4FF" stroke-width="1" stroke-linecap="round" opacity="0.6"
+            d="M 62,-130 C 68,-142 66,-152 60,-155">
+            <animate attributeName="d" dur="1.8s" repeatCount="indefinite"
+              values="
+                M  62,-130 C  68,-142  66,-152  60,-155;
+                M -18,-132 C -24,-144 -28,-154 -22,-157;
+                M  62,-130 C  68,-142  66,-152  60,-155"
+              calcMode="spline"
+              keySplines="0.45 0 0.55 1; 0.45 0 0.55 1"/>
+          </path>
+
+          <!-- Basal body / flagellar base dots -->
+          <circle cx="-8" cy="-72" r="3" fill="#E8D4FF" opacity="0.9"/>
+          <circle cx=" 8" cy="-72" r="3" fill="#E8D4FF" opacity="0.9"/>
+
+          <!-- label -->
+          <text x="0" y="105" text-anchor="middle"
+            font-family="'EB Garamond', serif" font-style="italic"
+            font-size="13" fill="#A67DE8" opacity="0.75">Chlamydomonas</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ── About ── -->
+    <section id="about">
+      <h2>About</h2>
+      <div class="section-rule"></div>
+      <div class="about-grid">
+
+        <!-- Photo slot -->
+        <div class="photo-slot">
+          <div class="photo-frame" id="photoFrame" onclick="document.getElementById('photo-input').click()" title="Click to add your photo">
+            <img id="photoImg" src="" alt="Profile photo"/>
+            <div class="photo-placeholder">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#7C4DBC" stroke-width="1.3">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
+              <span>Add your<br>photo here</span>
+            </div>
+          </div>
+          <input type="file" id="photo-input" accept="image/*"/>
+          <p class="photo-hint">Click to upload</p>
+        </div>
+
+        <div class="about-text">
+          <p>I am a PhD student in the Department of Mathematics at University College London, working on the mathematics of microswimmer locomotion in viscous fluids.</p>
+          <p>My research combines low Reynolds number hydrodynamics, multiscale asymptotic analysis, and singularity methods to study how swimmers behave in confined or boundary-influenced environments.</p>
+          <p>Before my PhD, I completed an undergraduate degree in mathematics. Outside of research, I am interested in scientific computing and mathematical modelling.</p>
+        </div>
+
+        <div class="about-details">
+          <div class="detail-block">
+            <div class="detail-label">Institution</div>
+            <div class="detail-value">University College London</div>
+          </div>
+          <div class="detail-block">
+            <div class="detail-label">Department</div>
+            <div class="detail-value">Mathematics</div>
+          </div>
+          <div class="detail-block">
+            <div class="detail-label">Supervisors</div>
+            <div class="detail-value">Benjamin J. Walker (UCL)<br>Mohit P. Dalwadi (Oxford)</div>
+          </div>
+          <div class="detail-block">
+            <div class="detail-label">Research interests</div>
+            <div class="tag-list">
+              <span class="tag">Fluid dynamics</span>
+              <span class="tag">Microswimmers</span>
+              <span class="tag">Low Re hydrodynamics</span>
+              <span class="tag">Multiscale analysis</span>
+              <span class="tag">Singularity methods</span>
+              <span class="tag">Boundary effects</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Research ── -->
+    <section id="research">
+      <h2>Research</h2>
+      <div class="section-rule"></div>
+      <div class="research-list">
+        <div class="research-item">
+          <div class="research-num">I</div>
+          <div>
+            <div class="research-title">Microswimmer locomotion near boundaries</div>
+            <div class="research-desc">Using singularity methods and far-field approximations to understand how boundaries alter swimmer trajectories, drift velocities, and effective diffusion in viscosity-dominated environments.</div>
+          </div>
+        </div>
+        <div class="research-item">
+          <div class="research-num">II</div>
+          <div>
+            <div class="research-title">Multi-timescale asymptotic analysis</div>
+            <div class="research-desc">Developing matched asymptotic expansions for swimmers whose internal dynamics evolve on timescales well-separated from their translational motion, enabling systematic reduction of complex models.</div>
+          </div>
+        </div>
+        <div class="research-item">
+          <div class="research-num">III</div>
+          <div>
+            <div class="research-title">Low Reynolds number hydrodynamics</div>
+            <div class="research-desc">Studying Stokes flow in geometrically confined settings, including the role of rotational and straining components of background flows in shaping swimmer behaviour.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Publications ── -->
+    <section id="publications">
+      <h2>Publications</h2>
+      <div class="section-rule"></div>
+      <div class="pub-list">
+        <div class="pub-item">
+          <div class="pub-meta">
+            <span class="pub-journal">Physical Review Fluids</span>
+            <span class="pub-year">2025</span>
+            <span class="pub-status">In preparation</span>
+          </div>
+          <div class="pub-title">Far-field approximations for multi-timescale microswimmers near a boundary</div>
+          <div class="pub-authors">Sara, Mohit P. Dalwadi, Benjamin J. Walker</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Contact ── -->
+    <section id="contact">
+      <h2>Contact</h2>
+      <div class="section-rule"></div>
+      <div class="contact-grid">
+        <p class="contact-text">I am based in the Department of Mathematics at UCL. I welcome correspondence about my research, potential collaborations, or questions about applied mathematics.</p>
+        <div class="contact-links">
+          <a href="mailto:your.email@ucl.ac.uk" class="contact-link">
+            <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+            your.email@ucl.ac.uk
+          </a>
+          <a href="https://www.ucl.ac.uk/mathematics" target="_blank" class="contact-link">
+            <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            UCL Mathematics
+          </a>
+          <a href="https://github.com/yourusername" target="_blank" class="contact-link">
+            <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            GitHub
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Active nav on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('aside nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id);
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => observer.observe(s));
+
+  // Photo upload
+  document.getElementById('photo-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const img = document.getElementById('photoImg');
+      img.src = ev.target.result;
+      document.getElementById('photoFrame').classList.add('has-photo');
+    };
+    reader.readAsDataURL(file);
+  });
+</script>
+
+</body>
+</html>
