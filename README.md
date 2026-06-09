@@ -1,4 +1,4 @@
-## Hi there 👋
+Current PhD student in applied mathematics at UCL 
 
 <!--
 **sara-curtis/sara-curtis** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
